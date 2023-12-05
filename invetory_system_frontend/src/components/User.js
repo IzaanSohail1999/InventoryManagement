@@ -53,6 +53,7 @@ const User = () => {
             });
 
             if (response.ok) {
+                alert(`${fieldToUpdate} updated successfully`)
                 console.log(`${fieldToUpdate} updated successfully`);
                 fetchUsers();
             } else {
@@ -98,6 +99,7 @@ const User = () => {
             });
 
             if (response.ok) {
+                alert('User added successfully')
                 console.log('User added successfully');
                 fetchUsers();
                 handleModalClose();
@@ -116,6 +118,7 @@ const User = () => {
             });
 
             if (response.ok) {
+                alert(`User with ID ${userId} deleted successfully`)
                 console.log(`User with ID ${userId} deleted successfully`);
                 fetchUsers(); // Refresh the user list after deletion
             } else {

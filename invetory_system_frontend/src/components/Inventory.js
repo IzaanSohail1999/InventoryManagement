@@ -91,6 +91,7 @@ const Inventory = () => {
             });
 
             if (response.ok) {
+                alert('Product saved successfully')
                 console.log('Product saved successfully');
                 fetchProducts();
                 handleModalClose();
@@ -134,6 +135,7 @@ const Inventory = () => {
             });
 
             if (response.ok) {
+                alert('Quantity updated successfully')
                 console.log('Quantity updated successfully');
                 fetchProducts();
                 handleQuantityModalClose();
@@ -154,6 +156,7 @@ const Inventory = () => {
             });
 
             if (response.ok) {
+                alert('Product deleted successfully')
                 console.log('Product deleted successfully');
                 fetchProducts();
             } else {
@@ -179,6 +182,26 @@ const Inventory = () => {
     const handleOrderSubmit = async () => {
         try {
             const validOrderProducts = orderProducts.filter(product => product.orderQuantity !== undefined && product.orderQuantity > 0);
+
+            const productIdsWithNonZeroQuantity = validOrderProducts.map(product => product.product_id);
+
+            const nonZeroOrderedItems = validOrderProducts.map(product => ({
+                product_id: product.product_id,
+                orderQuantity: product.orderQuantity,
+            }));
+
+            console.log(nonZeroOrderedItems)
+            console.log(products)
+
+            for (const { product_id, orderQuantity } of nonZeroOrderedItems) {
+                const product = products.find(product => product.product_id === product_id);
+                const availableQuantity = product?.quantity || 0;
+
+                if (orderQuantity > availableQuantity) {
+                    alert(`Invalid quantity entered for product named ${product.product_name}. Ordered quantity exceeds available quantity.`);
+                    throw new Error(`Invalid quantity entered for product named ${product.product_name}. Ordered quantity exceeds available quantity.`)
+                }
+            }
 
             const totalPrice = validOrderProducts.reduce((total, product) => {
                 return total + product.price * product.orderQuantity;
@@ -207,7 +230,30 @@ const Inventory = () => {
             });
 
             if (response.ok) {
-                console.log('Order placed successfully');
+                alert('Order placed successfully');
+                for (const productId of productIdsWithNonZeroQuantity) {
+                    const updateQuantityUrl = `http://127.0.0.1:5000/api/updateQuantity/${productId}`;
+                    const updateQuantityPayload = {
+                        quantity: validOrderProducts.find(product => product.product_id === productId).orderQuantity,
+                        action: 'remove',
+                    };
+
+                    const updateQuantityResponse = await fetch(updateQuantityUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updateQuantityPayload),
+                    });
+
+                    if (updateQuantityResponse.ok) {
+                        alert(`Quantity for product ${productId} updated successfully`)
+                        console.log(`Quantity for product ${productId} updated successfully`);
+                    } else {
+                        console.error(`Failed to update quantity for product ${productId}`);
+                    }
+                }
+                fetchProducts();
                 handleOrderModalClose();
             } else {
                 console.error('Failed to place order');
@@ -224,11 +270,11 @@ const Inventory = () => {
                     <h2>Inventory Page</h2>
                 </div>
                 <div className="column">
-                    {user.role === "Admin" && <button onClick={() => handleModalOpen('add')}>
+                    {user && user.role && user.role === "Admin" && <button onClick={() => handleModalOpen('add')}>
                         Add Product
                     </button>
                     }
-                    {user.role !== "Admin" && <button onClick={handleOrderModalOpen}>
+                    {user && user.role &&  user.role !== "Admin" && <button onClick={handleOrderModalOpen}>
                         Order
                     </button>
                     }
@@ -245,7 +291,7 @@ const Inventory = () => {
                     <th>Price</th>
                     <th>Category</th>
                     <th>History</th>
-                    {user.role === "Admin" && <th>Actions</th>}
+                    {user && user.role && user.role === "Admin" && <th>Actions</th>}
                 </tr>
                 </thead>
                 <tbody>
@@ -256,7 +302,7 @@ const Inventory = () => {
                             <td>
                                 {product.quantity}
                             </td>
-                            {user.role === "Admin" && ( <td>
+                            {user && user.role && user.role === "Admin" && ( <td>
                                     <td>
                                     <button onClick={() => handleQuantityModalOpen(product, 'add')}>
                                         Add
@@ -276,7 +322,7 @@ const Inventory = () => {
                         <td>{product.price}</td>
                         <td>{product.category}</td>
                         <td className="history">{product.history}</td>
-                        {user.role === "Admin" && <td>
+                        {user && user.role && user.role === "Admin" && <td>
                             <td>
                                 <button className="action-button"
                                         onClick={() => handleModalOpen('edit', product)}>Edit

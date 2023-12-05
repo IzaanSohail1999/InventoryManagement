@@ -31,12 +31,11 @@ const Navbar = () => {
                             Inventory
                         </Link>
                     </li>
-                    {user.role !== 'Admin' && <li className="nav-item">
+                    <li className="nav-item">
                         <Link to="/orders" className="nav-link">
                             Order
                         </Link>
                     </li>
-                    }
                     {user.role === 'Admin' && <li className="nav-item">
                         <Link to="/user" className="nav-link">
                             User

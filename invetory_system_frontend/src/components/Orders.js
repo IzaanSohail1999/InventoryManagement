@@ -40,8 +40,30 @@ const Orders = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {orders
+                    {user.role !== 'Admin' && orders
                         .filter((order) => user.id === order.user_id)
+                        .map((order) => (
+                            <tr key={order.id}>
+                                <td>{order.id}</td>
+                                <td>{order.user_id}</td>
+                                <td>
+                                    <ul className="orders-list">
+                                        {JSON.parse(order.user_order).products.map((product) => (
+                                            <li key={product.product_id}>
+                                                <td>
+                                                    {product.product_name} - ${product.price}
+                                                </td>
+                                                <td>
+                                                    Quantity - {product.quantity ?? 0}
+                                                </td>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </td>
+                                <td>${order.price}</td>
+                            </tr>
+                        ))}
+                    {user.role === 'Admin' && orders
                         .map((order) => (
                             <tr key={order.id}>
                                 <td>{order.id}</td>

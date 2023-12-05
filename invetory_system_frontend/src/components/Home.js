@@ -1,23 +1,15 @@
 import React from 'react';
+import welcomeImage from '../Images/homepage.avif'; // Adjust the path accordingly
+import './Homestyle.css'; // Import the CSS file
 
 const Home = () => {
     return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Inventory Management System</h2>
+        <div className="container">
+            <div className="text-container">
+                <h2 className="title">Inventory Management System</h2>
+            </div>
         </div>
     );
-};
-
-const styles = {
-    container: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh', // Adjust the height as needed
-    },
-    title: {
-        textAlign: 'center',
-    },
 };
 
 export default Home;

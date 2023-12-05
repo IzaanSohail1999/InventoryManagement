@@ -4,15 +4,17 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+    background-image: url('../Images/loginPage.avif'); /* Adjust the path accordingly */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-form {
-    width: 300px;
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity if needed */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .form-group {
